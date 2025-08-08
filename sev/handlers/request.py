@@ -4,6 +4,8 @@ from aiogram.fsm.state import State, StatesGroup
 from handlers.menu import Menu
 from aiogram.types import FSInputFile, URLInputFile, BufferedInputFile
 import sqlite3
+import time
+
 router = Router()
 
 
@@ -18,7 +20,7 @@ async def ans1(message: types.Message, state: FSMContext):
     conn = sqlite3.connect('database.sql')
     cur = conn.cursor()
     cur.execute(
-        'CREATE TABLE IF NOT EXISTS requests (id INTEGER PRIMARY KEY AUTOINCREMENT, name varchar(50), phone varchar(50), tg int(255), text varchar(1000), photo BLOB(1))'
+        'CREATE TABLE IF NOT EXISTS requests (id INTEGER PRIMARY KEY AUTOINCREMENT, name varchar(50), phone varchar(50), tg int(255), text varchar(1000), photo BLOB(1), status varchar(50))'
         )
     conn.commit()
     cur.close()
@@ -44,9 +46,10 @@ async def ans2(message: types.Message, state: FSMContext, bot: Bot):
         )
     my_reqs = cur.fetchall()
     for el in my_reqs:
-        info = f'{el[4]}\n'
+        info = f'{el[4]}\n{el[6]}'
         await bot.send_photo(chat_id=u_id, photo=el[5])
         await message.answer(info)
+        time.sleep(0.5)
 
     cur.close()
     conn.close()
@@ -90,7 +93,7 @@ async def get_photo(message: types.Message, state: FSMContext):
     
     for el in list:
         cur.execute(
-            "INSERT INTO requests (name, phone, tg, text, photo) VALUES ('%s', '%s' ,'%s', '%s', '%s')" % (el[1], el[2], el[3], request, photo_file_id)
+            "INSERT INTO requests (name, phone, tg, text, photo, status) VALUES ('%s', '%s' ,'%s', '%s', '%s', 'Ожидает рассмотрения')" % (el[1], el[2], el[3], request, photo_file_id)
         )
     
     

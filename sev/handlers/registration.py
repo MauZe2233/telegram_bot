@@ -104,7 +104,13 @@ async def agreed(message: types.Message, state: FSMContext):
         f"✅ Регистрация завершена!\n\n👤 ФИО: {data['fio']}\n📱 Телефон: {data['phone']}",
         reply_markup=types.ReplyKeyboardRemove()
     )
-    await message.answer("Начнем?")
+    keyboard = types.ReplyKeyboardMarkup(
+        keyboard=[
+            [types.KeyboardButton(text="Главное меню")]
+        ],
+        resize_keyboard=True
+    )
+    await message.answer(f"Добро пожаловать, {data['fio']}! ", reply_markup=keyboard)
     await state.set_state(Registration.done)
     await state.set_state(Menu.wait)
 
