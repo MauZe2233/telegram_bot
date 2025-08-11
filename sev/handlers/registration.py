@@ -18,7 +18,7 @@ class Registration(StatesGroup):
 @router.message(Command("start"))
 async def start(message: types.Message, state: FSMContext):
     u_id = message.from_user.id
-
+    await message.delete()
     conn = sqlite3.connect('database.sql')
     cur = conn.cursor()
 
@@ -55,6 +55,8 @@ async def start(message: types.Message, state: FSMContext):
 @router.message(Registration.fio)
 async def get_fio(message: types.Message, state: FSMContext):
     await state.update_data(fio=message.text)
+    
+    await message.delete()
     await message.answer("📱 Теперь отправьте ваш номер телефона (можно вручную или кнопкой).",
                          reply_markup=types.ReplyKeyboardMarkup(
                              keyboard=[[types.KeyboardButton(text="📲 Отправить мой номер", request_contact=True)]],
@@ -76,9 +78,9 @@ async def get_phone(message: types.Message, state: FSMContext):
         await message.answer("Телефон введен неверно! Попробуйте ещё раз")
         get_phone()
         return 0
-       
+    
     await state.update_data(phone=phone)
-
+    await message.delete()
     await message.answer("Подтвердите согласие на обработку персональных данных (просто формальность)", 
         reply_markup=types.ReplyKeyboardMarkup(
             keyboard=[[types.KeyboardButton(text="Согласен")]],
@@ -90,6 +92,7 @@ async def get_phone(message: types.Message, state: FSMContext):
 @router.message(Registration.agreed, F.text.lower() == "согласен")
 async def agreed(message: types.Message, state: FSMContext):
     await state.update_data(tg_id = message.from_user.id)
+    await message.delete()
     data = await state.get_data()
     conn = sqlite3.connect('database.sql')
     cur = conn.cursor()

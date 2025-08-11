@@ -11,6 +11,7 @@ class Menu(StatesGroup):
 
 @router.message(Menu.wait, F.text.lower() == 'главное меню')
 async def menu(message: types.Message, state: FSMContext):
+    await message.delete()
     keyboard = types.ReplyKeyboardMarkup(
         keyboard=[
             [types.KeyboardButton(text="Оставить заявку")],

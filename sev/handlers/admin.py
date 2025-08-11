@@ -63,7 +63,7 @@ async def show_requests(message: types.Message, bot: Bot):
             )
         request = cur.fetchall()
         for el in request:
-            info = f'ФИО: {el[1]}, Телефон: {el[2]}, телеграмм id: {el[3]}, заявка: №{el[0]} {el[4]}\n'
+            info = f'район: {el[7]}\nФИО: {el[1]}, Телефон: {el[2]}, телеграмм id: {el[3]}, заявка: №{el[0]} {el[4]}\n'
             await bot.send_photo(chat_id=u_id, photo=el[5])
             await message.answer(info)
         cur.close()
