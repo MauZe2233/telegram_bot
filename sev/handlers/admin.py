@@ -7,7 +7,7 @@ from aiogram.fsm.state import State, StatesGroup
 
 router = Router()
 
-admins = [1307231822]
+admins = [1307231822, 1122341470,6943220622]
 
 class Admin(StatesGroup):
     admin = State()
