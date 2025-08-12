@@ -9,7 +9,7 @@ class Menu(StatesGroup):
     wait = State()
     menu = State()
 
-@router.message(Menu.wait, F.text.lower() == 'главное меню')
+@router.message(F.text.lower() == 'главное меню')
 async def menu(message: types.Message, state: FSMContext):
     await message.delete()
     keyboard = types.ReplyKeyboardMarkup(

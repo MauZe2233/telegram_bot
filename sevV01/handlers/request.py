@@ -87,10 +87,29 @@ async def get_phone(message: types.Message, state: FSMContext, bot: Bot):
     cur.execute(
         "UPDATE users SET name = '%s', phone = '%s' WHERE tg LIKE '%s'" % (data["fio"], data["phone"], u_id)
         )
+    cur.execute(
+        "SELECT * FROM users WHERE tg LIKE '%s'" % (u_id)
+        )
+    profile = cur.fetchall()
+    cur.execute(
+        "SELECT * FROM requests WHERE tg LIKE '%s'" % (u_id)
+        )
+    req = cur.fetchall()
+    for el in profile:
+        info = f'ФИО: {el[1]}\n Телефон: {el[2]}\n Заявок: {len(req)}'
     conn.commit()
     cur.close()
     conn.close()
-    await show_profile(message, bot, state)
+    await message.answer("Внесены изменения\nВаш профиль:")
+    keyboard = types.ReplyKeyboardMarkup(
+        keyboard=[
+            [types.KeyboardButton(text="Редактировать")],
+            [types.KeyboardButton(text="Главное меню")]
+        ],
+        resize_keyboard=True
+    )    
+    await bot.send_message(chat_id=u_id, text = info, reply_markup=keyboard)
+    await state.set_state(Menu.wait)
 
 
 
